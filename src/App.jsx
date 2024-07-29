@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useMemo } from "react";
 import { initialBoardConfiguration } from "./constants";
 import { BoardConfiguration } from "./components/BoardConfiguration";
 import { Board } from "./components/Board";
@@ -6,6 +6,7 @@ import "./index.css";
 import { Search } from "./components/Search";
 import { Button } from "antd";
 import { BoardProvider } from "./context/BoardContext";
+import { useDebounce } from "./hooks/useDebounce";
 
 /*
   <BoardProvider>
@@ -34,8 +35,7 @@ export const App = () => {
   const [isConfigVisible, setConfigVisible] = useState(false);
   const [searchText, setSearchText] = useState("");
 
-  /*This search should be BE driven currently keeping a flag for visibility of blocks when searching  */
-  useEffect(() => {
+  const onSearchTextChange = useCallback(() => {
     setBoardConfiguration((prevBoardConfiguration) => {
       return prevBoardConfiguration.map((board) => {
         return {
@@ -52,6 +52,15 @@ export const App = () => {
       });
     });
   }, [searchText]);
+
+  const debouncedFn = useDebounce(onSearchTextChange, 300);
+
+  /*This search should be BE driven currently keeping a flag for visibility of blocks when searching  */
+  useEffect(() => {
+    if (debouncedFn) {
+      debouncedFn();
+    }
+  }, [debouncedFn, onSearchTextChange, searchText]);
 
   return (
     <div className="app">

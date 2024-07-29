@@ -41,7 +41,7 @@ export const Board = () => {
   };
 
   /* This function is responsible of checking where to drop the card in which board and from which board */
-  const onDrop = (event, DropboardId) => {
+  const onDrop = (event, DropboardId, blockIndex) => {
     const removeFromBoard = event.dataTransfer.getData("fromBoard");
     const cardToBeMovedId = event.dataTransfer.getData("cardToBeMovedId");
     const boardToRemoveFrom = boardConfiguration.find(
@@ -50,7 +50,6 @@ export const Board = () => {
     const boardToAddTo = boardConfiguration.find(
       (element) => element.id === DropboardId
     );
-
     if (boardToRemoveFrom && boardToAddTo) {
       const cardToBeMoved = boardToRemoveFrom.blockList.find(
         (block) => block.id === cardToBeMovedId
@@ -65,19 +64,21 @@ export const Board = () => {
         if (removeFromBoard === DropboardId) {
           const reorderedBlockList = [...updatedBoardToRemoveFrom.blockList];
           cardToBeMoved.status = boardToAddTo.name;
-          reorderedBlockList.unshift(cardToBeMoved);
+          reorderedBlockList.splice(blockIndex, 0, cardToBeMoved);
           const updatedBoardToAddTo = {
             ...boardToAddTo,
             blockList: reorderedBlockList,
           };
           setBoardConfiguration((prevBoards) =>
             prevBoards.map((board) =>
-              board.id === removeFromBoard ? updatedBoardToAddTo : board
+              board.id === DropboardId ? updatedBoardToAddTo : board
             )
           );
         } else {
           if (validateStrategy(cardToBeMoved, boardToAddTo)) {
+            const reorderedBlockList = [...boardToAddTo.blockList];
             cardToBeMoved.status = boardToAddTo.name;
+            reorderedBlockList.splice(blockIndex, 0, cardToBeMoved);
             cardToBeMoved.history.unshift({
               source: boardToRemoveFrom.label,
               destination: boardToAddTo.label,
@@ -85,7 +86,7 @@ export const Board = () => {
             });
             const updatedBoardToAddTo = {
               ...boardToAddTo,
-              blockList: [...boardToAddTo.blockList, cardToBeMoved],
+              blockList: reorderedBlockList,
             };
             setBoardConfiguration((prevBoards) =>
               prevBoards.map((board) => {

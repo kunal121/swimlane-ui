@@ -8,6 +8,7 @@ export const Search = () => {
     const { value } = e.target;
     setSearchText(value);
   };
+
   return (
     <Input
       value={search}
