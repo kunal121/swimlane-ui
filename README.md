@@ -44,3 +44,6 @@ Note: CRUD of blocks are not implemented yet currently controlled by mock data f
 ## Demo Link
 
 https://drive.google.com/file/d/1m7D2HxnqfxQyBT5HIdyOq7m6ceU63GCw/view
+
+## Design Link
+https://drive.google.com/file/d/1lOgZC1eXJygQoplclJD81lQuakKEXLR6/view?usp=sharing
